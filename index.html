@@ -9,18 +9,13 @@
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
 <style>
-body {
-  background:#000;
-  color:#fff;
-  font-family:"M PLUS 1 Code", monospace;
-  margin:0;
-  font-size:18px;  /* ← ★全体を少し大きく（元は14px） */
-}
-
-/* データ行（line1, line2）の文字バランスを調整 */
-.line1, .line2 {
-  font-size:1em; /* ← bodyに合わせる（以前は0.95em） */
-}
+  body {
+    background:#000;
+    color:#fff;
+    font-family:"M PLUS 1 Code", monospace;
+    margin:0;
+    font-size:16px; /* 全体を少し大きく */
+  }
 
   header {
     background:#111;
@@ -28,33 +23,36 @@ body {
     padding:10px;
   }
 
-#sortButtons {
-  display:flex;
-  justify-content:center;
-  flex-wrap:wrap;
-  gap:4px;
-}
+  /* 並び替えボタンエリア */
+  #sortButtons {
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:4px;
+    font-family:"M PLUS 1 Code", monospace;
+  }
 
-#sortButtons button {
-  flex:1;
-  min-width:60px;
-  background:#222;
-  color:#fff;
-  border:1px solid #555;   /* ← 少し細めで落ち着いた枠線 */
-  border-radius:6px;
-  padding:3px 8px;
-  font-size:16px;
-  line-height:1;
-  height:32px;
-  box-sizing:border-box;
-  cursor:pointer;
-  transition:border-color 0.2s, color 0.2s;
-}
+  #sortButtons button {
+    flex:1;
+    min-width:60px;
+    background:#222;
+    color:#fff;
+    border:1px solid #555;     /* 細めの枠線 */
+    border-radius:6px;
+    padding:3px 8px;
+    font-size:16px;
+    line-height:1;
+    height:32px;
+    box-sizing:border-box;
+    cursor:pointer;
+    transition:border-color 0.2s, color 0.2s;
+    font-family:"M PLUS 1 Code", monospace; /* フォント統一 */
+  }
 
-#sortButtons button:hover {
-  border-color:#0f0;       /* ← 枠線だけ緑に */
-  color:#0f0;              /* ← 文字色も少し合わせて強調 */
-}
+  #sortButtons button:hover {
+    border-color:#0f0; /* 枠だけ色変更 */
+    color:#0f0;
+  }
 
   .container {
     padding:10px;
@@ -67,26 +65,35 @@ body {
     line-height:1.4em;
   }
 
-  /* 1行目 */
+  /* 上段（line1） */
   .line1 {
     display: grid;
-    grid-template-columns: 115px 1fr 1fr 110px;
+    grid-template-columns: 110px 1fr 1fr 110px;
     align-items: center;
-    font-size:0.95em;
+    font-size:1em;
     color:#eee;
   }
   .line1 div { text-align: right; }
+  /* 日付と経過年月をグレーに */
+  .line1 div:first-child,
+  .line1 div:last-child {
+    color:#aaa;
+  }
 
-  /* 2行目 */
+  /* 下段（line2） */
   .line2 {
     display: grid;
-    grid-template-columns: 115px 1fr 1fr 110px;
+    grid-template-columns: 110px 1fr 1fr 110px;
     align-items: center;
-    font-size:0.95em;
+    font-size:1em;
     color:#eee;
   }
   .line2 div { text-align: right; }
-  .line2 .highlight { color:#0f0; font-weight:500; }
+  .line2 .highlight {
+    color:#0f0;
+    font-weight:600;
+    font-size:1.1em; /* 燃費を少し目立たせる */
+  }
 
   @media (max-width:600px){
     .line1, .line2 { font-size:0.9em; }
@@ -118,13 +125,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const csvUrl = "https://docs.google.com/spreadsheets/d/1YKMiMq2GpMAR3cqvqeiklqtGuQa8JJx4oO5YnpzxKso/gviz/tq?tqx=out:csv&sheet=燃費";
 
   function formatDateDisplay(str) {
-    const m = str.match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
+    const m = str.match(/(\\d{4})[\\/\\-](\\d{1,2})[\\/\\-](\\d{1,2})/);
     if (!m) return str;
     return `${m[1]}年${parseInt(m[2])}月${parseInt(m[3])}日`;
   }
 
   function parseSlashDate(str) {
-    const m = str.match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
+    const m = str.match(/(\\d{4})[\\/\\-](\\d{1,2})[\\/\\-](\\d{1,2})/);
     if (!m) return new Date(0);
     return new Date(+m[1], +m[2]-1, +m[3]);
   }
@@ -181,20 +188,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ====== ソートボタン処理 ======
+  // ===== ソートボタン処理 =====
   const buttons = document.querySelectorAll("#sortButtons button");
   buttons.forEach(btn => {
     btn.addEventListener("click", () => {
       const key = btn.dataset.key;
-      if(sortKey === key) sortAsc = !sortAsc; // 同じ列なら昇降切替
-      else sortAsc = false; // 新しい列なら降順スタート
+      if (sortKey === key) sortAsc = !sortAsc;
+      else sortAsc = false;
       sortKey = key;
 
-      // ボタンの矢印更新
       buttons.forEach(b => {
-        if(b.dataset.key === sortKey){
+        if (b.dataset.key === sortKey) {
           b.textContent = key + (sortAsc ? " ▲" : " ▼");
-
         } else {
           b.textContent = b.dataset.key;
         }
