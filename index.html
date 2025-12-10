@@ -59,18 +59,18 @@
     line-height:1.4em;
   }
 
-  .line1, .line2, .line3 {
+  .line1, .line2 {
     display:flex;
     justify-content:space-between;
     flex-wrap:wrap;
-    font-size:0.95em; /* 全行統一 */
+    font-size:0.95em;
     color:#eee;
   }
 
   .highlight { color:#0f0; font-weight:500; }
 
   @media (max-width:600px){
-    .line1, .line2, .line3 { font-size:0.9em; }
+    .line1, .line2 { font-size:0.9em; }
   }
 </style>
 </head>
@@ -149,17 +149,15 @@ document.addEventListener("DOMContentLoaded", () => {
       el.innerHTML = `
         <div class="line1">
           <div>${formatDateDisplay(r["日付"] || "")}</div>
-          <div class="highlight">${r["燃費"] || ""}km/L</div>
+          <div>${r["ODO"] || ""}km</div>
+          <div>${r["TRIP"] || ""}km</div>
+          <div>${r["経過年月"] || ""}</div>
         </div>
         <div class="line2">
           <div>${r["数量"] || ""}L</div>
           <div>${r["金額"] || ""}円</div>
           <div>${r["単価"] || ""}円/L</div>
-        </div>
-        <div class="line3">
-          <div>${r["ODO"] || ""}km</div>
-          <div>${r["TRIP"] || ""}km</div>
-          <div>${r["経過年月"] || ""}</div>
+          <div class="highlight">${r["燃費"] || ""}km/L</div>
         </div>
       `;
       out.appendChild(el);
