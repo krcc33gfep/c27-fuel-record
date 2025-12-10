@@ -89,7 +89,7 @@
 
 <header>
   <div id="sortButtons">
-    <button data-key="日付">日付 ⬇︎</button>
+    <button data-key="日付">日付 ▼</button>
     <button data-key="数量">数量</button>
     <button data-key="金額">金額</button>
     <button data-key="単価">単価</button>
@@ -184,7 +184,8 @@ document.addEventListener("DOMContentLoaded", () => {
       // ボタンの矢印更新
       buttons.forEach(b => {
         if(b.dataset.key === sortKey){
-          b.textContent = key + (sortAsc ? " ⬆︎" : " ⬇︎");
+          b.textContent = key + (sortAsc ? " ▲" : " ▼");
+
         } else {
           b.textContent = b.dataset.key;
         }
