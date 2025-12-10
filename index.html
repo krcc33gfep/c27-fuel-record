@@ -59,15 +59,26 @@
     line-height:1.4em;
   }
 
-  .line1, .line2 {
+  /* 1行目 */
+  .line1 {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4列均等 */
-    justify-items: end; /* 右寄せ */
+    grid-template-columns: 120px 1fr 1fr 120px; /* 日付と経過年月は固定幅 */
+    align-items: center;
     font-size:0.95em;
     color:#eee;
   }
-
-  .highlight { color:#0f0; font-weight:500; }
+  .line1 div { text-align: right; } /* 全部右寄せ */
+  
+  /* 2行目 */
+  .line2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 120px; /* 燃費列は固定幅 */
+    align-items: center;
+    font-size:0.95em;
+    color:#eee;
+  }
+  .line2 div { text-align: right; }
+  .line2 .highlight { color:#0f0; font-weight:500; }
 
   @media (max-width:600px){
     .line1, .line2 { font-size:0.9em; }
