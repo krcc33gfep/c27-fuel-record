@@ -77,8 +77,10 @@
     font-size:0.95em;
     color:#eee;
   }
-  .line2 div { text-align: right; }
-  .line2 .highlight { color:#0f0; font-weight:500; }
+  .line2 .num { text-align: right; }   /* 数量 */
+  .line2 .price { text-align: right; } /* 金額 */
+  .line2 .unit { text-align: right; }  /* 単価 */
+  .line2 .highlight { color:#0f0; font-weight:500; text-align: right; }
 
   @media (max-width:600px){
     .line1, .line2 { font-size:0.9em; }
@@ -165,9 +167,9 @@ document.addEventListener("DOMContentLoaded", () => {
           <div>${r["経過年月"] || ""}</div>
         </div>
         <div class="line2">
-          <div>${r["数量"] || ""}L</div>
-          <div>${r["金額"] || ""}円</div>
-          <div>${r["単価"] || ""}円/L</div>
+          <div class="num">${r["数量"] || ""}L</div>
+          <div class="price">${r["金額"] || ""}円</div>
+          <div class="unit">${r["単価"] || ""}円/L</div>
           <div class="highlight">${r["燃費"] || ""}km/L</div>
         </div>
       `;
