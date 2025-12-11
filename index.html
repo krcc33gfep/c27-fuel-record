@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -5,27 +6,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>燃費チェックビューワー</title>
 
-<!-- フォント：M PLUS 1 Code -->
-<link href="https://fonts.googleapis.com/css2?family=M+PLUS+1+Code:wght@400;500&display=swap" rel="stylesheet">
+<!-- 読みやすい日本語フォント -->
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
 <style>
-  /* ===== 基本設定 ===== */
-  html, body {
+  body {
     background:#000;
     color:#fff;
-    font-family:"M PLUS 1 Code", sans-serif;
+    font-family:"M PLUS Rounded 1c", sans-serif;
     margin:0;
-    padding:0;
-    font-size:15px; /* ←スマホ基準の小さめ文字 */
-    overflow-x:hidden;
-    box-sizing:border-box;
+    font-size:17px;
   }
 
   header {
     background:#111;
     border-bottom:1px solid #222;
-    padding:8px;
+    padding:10px;
   }
 
   /* 並び替えボタンエリア */
@@ -34,6 +31,7 @@
     justify-content:center;
     flex-wrap:wrap;
     gap:4px;
+    font-family:"M PLUS Rounded 1c", sans-serif;
   }
 
   #sortButtons button {
@@ -43,12 +41,14 @@
     color:#fff;
     border:1px solid #555;
     border-radius:6px;
-    padding:4px 6px;
-    font-size:14px;
-    height:30px;
+    padding:3px 8px;
+    font-size:17px;
     line-height:1;
+    height:32px;
+    box-sizing:border-box;
     cursor:pointer;
     transition:border-color 0.2s, color 0.2s;
+    font-family:"M PLUS Rounded 1c", sans-serif;
   }
 
   #sortButtons button:hover {
@@ -57,52 +57,50 @@
   }
 
   .container {
-    padding:8px;
+    padding:10px;
     box-sizing:border-box;
   }
 
   .row {
     border-bottom:1px solid #222;
-    padding:5px 2px;
-    line-height:1.3em;
-  }
-
-  /* ===== 上段（line1） ===== */
-  .line1 {
-    display:grid;
-    grid-template-columns: 95px 1fr 1fr 90px;
-    align-items:center;
-    font-size:0.9em; /* 小さめ控えめ */
-    color:#eee;
-    gap:2px;
-  }
-  .line1 div { text-align:right; }
-  .line1 div:first-child,
-  .line1 div:last-child { color:#aaa; }
-
-  /* ===== 下段（line2） ===== */
-  .line2 {
-    display:grid;
-    grid-template-columns: 100px 1fr 1fr 100px;
-    align-items:center;
-    font-size:1.2em; /* ← 約18px相当 */
+    padding:6px 4px;
     line-height:1.4em;
-    color:#eee;
-    gap:2px;
   }
-  .line2 div { text-align:right; }
 
+  /* 上段（line1） */
+  .line1 {
+    display: grid;
+    grid-template-columns: 110px 1fr 1fr 110px;
+    align-items: center;
+    font-size:0.95em; /* ← 少し小さめに調整 */
+    color:#eee;
+  }
+  .line1 div { text-align: right; }
+  .line1 div:first-child,
+  .line1 div:last-child {
+    color:#aaa; /* 日付・経過年月を控えめに */
+  }
+
+  /* 下段（line2） */
+  .line2 {
+    display: grid;
+    grid-template-columns: 120px 1fr 1fr 120px;
+    align-items: center;
+    font-size:1.3em; /* ← 約30%拡大して主役感を出す */
+    color:#eee;
+  }
+  .line2 div { text-align: right; }
   .line2 .highlight {
     color:#0f0;
-    font-weight:normal;
-    font-size:1em;
+    font-weight:600; /* ← 太字＆色で自然に強調 */
+    font-size:1em;   /* ← 行全体と同じサイズ */
   }
 
-  /* ===== 小型端末対応 ===== */
-  @media (max-width:400px) {
-    body { font-size:14px; }
-    .line1 { grid-template-columns: 85px 1fr 1fr 80px; font-size:0.85em; }
-    .line2 { grid-template-columns: 90px 1fr 1fr 90px; font-size:1.1em; }
+  @media (max-width:600px){
+    body { font-size:15px; }
+    #sortButtons button { font-size:15px; }
+    .line1 { font-size:0.9em; }
+    .line2 { font-size:1.2em; grid-template-columns: 110px 1fr 1fr 110px; }
   }
 </style>
 </head>
