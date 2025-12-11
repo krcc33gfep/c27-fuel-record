@@ -80,21 +80,22 @@
     color:#aaa; /* 日付・経過年月を控えめに */
   }
 
-  /* 下段（line2） */
-  .line2 {
-    display: grid;
-    grid-template-columns: 120px 1fr 1fr 120px;
-    align-items: center;
-    font-size:1.3em; /* ← 約30%拡大して主役感を出す */
-    color:#eee;
-  }
-  .line2 div { text-align: right; }
-  .line2 .highlight {
-    color:#0f0;
-    font-weight:600; /* ← 太字＆色で自然に強調 */
-    font-size:1em;   /* ← 行全体と同じサイズ */
-  }
+/* 下段（line2） */
+.line2 {
+  display: grid;
+  grid-template-columns: 120px 1fr 1fr 120px;
+  align-items: center;
+  font-size:1.5em; /* ← 1.3em → 1.5em に変更（約25.5px） */
+  color:#eee;
+}
+.line2 div { text-align: right; }
 
+/* 燃費 */
+.line2 .highlight {
+  color:#0f0;
+  font-weight:normal; /* ← 太字を解除 */
+  font-size:1em; /* 行全体と同じ大きさ */
+}
   @media (max-width:600px){
     body { font-size:15px; }
     #sortButtons button { font-size:15px; }
