@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -6,15 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>燃費チェックビューワー</title>
 
-<!-- 読みやすい日本語フォント -->
-<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500&display=swap" rel="stylesheet">
+<!-- 読みやすい日本語フォント（M PLUS 1 Code） -->
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+1+Code:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
 <style>
   body {
     background:#000;
     color:#fff;
-    font-family:"M PLUS Rounded 1c", sans-serif;
+    font-family:"M PLUS 1 Code", sans-serif;
     margin:0;
     font-size:17px;
   }
@@ -31,7 +30,7 @@
     justify-content:center;
     flex-wrap:wrap;
     gap:4px;
-    font-family:"M PLUS Rounded 1c", sans-serif;
+    font-family:"M PLUS 1 Code", sans-serif;
   }
 
   #sortButtons button {
@@ -48,7 +47,7 @@
     box-sizing:border-box;
     cursor:pointer;
     transition:border-color 0.2s, color 0.2s;
-    font-family:"M PLUS Rounded 1c", sans-serif;
+    font-family:"M PLUS 1 Code", sans-serif;
   }
 
   #sortButtons button:hover {
@@ -129,13 +128,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const csvUrl = "https://docs.google.com/spreadsheets/d/1YKMiMq2GpMAR3cqvqeiklqtGuQa8JJx4oO5YnpzxKso/gviz/tq?tqx=out:csv&sheet=燃費";
 
   function formatDateDisplay(str) {
-    const m = str.match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
+    const m = str.match(/(\\d{4})[\\/\\-](\\d{1,2})[\\/\\-](\\d{1,2})/);
     if (!m) return str;
     return `${m[1]}年${parseInt(m[2])}月${parseInt(m[3])}日`;
   }
 
   function parseSlashDate(str) {
-    const m = str.match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
+    const m = str.match(/(\\d{4})[\\/\\-](\\d{1,2})[\\/\\-](\\d{1,2})/);
     if (!m) return new Date(0);
     return new Date(+m[1], +m[2]-1, +m[3]);
   }
