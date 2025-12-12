@@ -4,39 +4,30 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>燃費チェックビューワー</title>
-
-<!-- フォント -->
 <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-
 <style>
   body {
-    background:#000;
-    color:#fff;
-    font-family:"M PLUS Rounded 1c", sans-serif;
-    margin:0;
-    font-size:17px;
+    background: #000;
+    color: #fff;
+    font-family: "M PLUS Rounded 1c", sans-serif;
+    margin: 0;
+    font-size: 17px;
   }
-
   header {
-    background:#111;
-    border-bottom:1px solid #222;
-    padding:10px;
+    background: #111;
+    border-bottom: 1px solid #222;
+    padding: 10px;
   }
-
-  /* 並び替えボタン */
   #sortButtons {
     display: flex;
     justify-content: center;
+    flex-wrap: wrap;
     gap: 4px;
-    overflow-x: auto;      /* 横幅不足時はスクロール */
-    padding-bottom: 4px;
-    -webkit-overflow-scrolling: touch; /* スマホでスムーズスクロール */
   }
-
   #sortButtons button {
-    flex: none;            /* 内容に応じて幅を決定 */
-    min-width: 60px;       /* 最小幅 */
+    flex: 1;
+    min-width: 60px;
     background: #222;
     color: #fff;
     border: 1px solid #555;
@@ -47,81 +38,53 @@
     height: 32px;
     box-sizing: border-box;
     cursor: pointer;
-    white-space: nowrap;   /* テキスト改行防止 */
     transition: border-color 0.2s, color 0.2s;
   }
-
   #sortButtons button:hover {
     border-color: #0f0;
     color: #0f0;
   }
-
-  /* プラスボタンだけ小さめ */
-  #addButton {
-    min-width: 42px;       /* 他ボタンより小さめ */
-    padding: 0 6px;
-  }
-
-  /* コンテンツエリア */
   .container {
-    padding:10px;
-    box-sizing:border-box;
-    width:800px;
-    max-width:100%;
-    margin:0 auto;
+    padding: 10px;
+    box-sizing: border-box;
+    width: 800px;
+    max-width: 100%;
+    margin: 0 auto;
   }
-
   .row {
-    border-bottom:1px solid #222;
-    padding:6px 4px;
-    line-height:1.4em;
+    border-bottom: 1px solid #222;
+    padding: 6px 4px;
+    line-height: 1.4em;
   }
-
   .line1 {
     display: grid;
     grid-template-columns: repeat(4, auto);
     justify-content: space-between;
     align-items: center;
-    font-size:0.95em;
-    color:#eee;
+    font-size: 0.95em;
+    color: #eee;
   }
-
   .line1 div { text-align: right; }
   .line1 div:first-child { text-align: left; }
-  .line1 div:last-child { color:#aaa; }
-
+  .line1 div:last-child { color: #aaa; }
   .line2 {
     display: grid;
     grid-template-columns: repeat(4, auto);
     justify-content: space-between;
     align-items: center;
-    font-size:1.3em;
-    color:#eee;
+    font-size: 1.3em;
+    color: #eee;
   }
-
   .line2 div { text-align: right; }
-  .line2 div:nth-child(2) { color:#FFB000; }
-  .line2 .highlight { color:#0f0; font-weight:normal; font-size:1em; }
-
+  .line2 div:nth-child(2) { color: #FFB000; }
+  .line2 .highlight { color: #0f0; }
   @media (max-width:600px){
-    #sortButtons button {
-      min-width: 50px;
-      padding: 2px 6px;
-      font-size: 16px;
-      height: 28px;
-    }
-    #addButton {
-      min-width: 36px;
-      padding: 0 4px;
-      font-size: 15px;
-      height: 24px;
-    }
+    body { font-size: 15px; }
+    #sortButtons button { font-size: 15px; }
   }
 </style>
 </head>
-
 <body>
-
 <header>
   <div id="sortButtons">
     <button data-key="日付">日付 ▼</button>
@@ -129,8 +92,7 @@
     <button data-key="金額">金額</button>
     <button data-key="単価">単価</button>
     <button data-key="燃費">燃費</button>
-    <!-- 追加ボタン：Apps Script 入力ページ -->
-    <button id="addButton" onclick="window.open('https://script.google.com/macros/s/AKfycbyiwy2EW0XGdc8d3gsrJUq0CSvhZ4pAZVbLWm4T5DuE0cXG3ttZIExb1Q5cjqniNxxbUg/exec', '_blank')">＋</button>
+    <button id="addButton" title="データを追加">＋</button>
   </div>
 </header>
 
@@ -138,11 +100,10 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+  const csvUrl = "https://docs.google.com/spreadsheets/d/1YKMiMq2GpMAR3cqvqeiklqtGuQa8JJx4oO5YnpzxKso/gviz/tq?tqx=out:csv&sheet=燃費";
   let rows = [];
   let sortKey = "日付";
   let sortAsc = false;
-
-  const csvUrl = "https://docs.google.com/spreadsheets/d/1YKMiMq2GpMAR3cqvqeiklqtGuQa8JJx4oO5YnpzxKso/gviz/tq?tqx=out:csv&sheet=燃費";
 
   function formatDateDisplay(str) {
     const m = str.match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
@@ -156,29 +117,31 @@ document.addEventListener("DOMContentLoaded", () => {
     return new Date(+m[1], +m[2]-1, +m[3]);
   }
 
-  fetch(csvUrl)
-    .then(r => r.text())
-    .then(csvText => {
-      Papa.parse(csvText, {
-        header: true,
-        skipEmptyLines: true,
-        complete: results => {
-          rows = results.data;
-          sortAndRender();
-        }
+  function loadCsv() {
+    fetch(csvUrl)
+      .then(r => r.text())
+      .then(csvText => {
+        Papa.parse(csvText, {
+          header: true,
+          skipEmptyLines: true,
+          complete: results => {
+            rows = results.data;
+            sortAndRender();
+          }
+        });
       });
-    })
-    .catch(err => {
-      document.getElementById("output").innerHTML = "❌ データの読み込みに失敗しました。";
-      console.error(err);
-    });
+  }
 
   function sortAndRender() {
-    const key = sortKey;
     rows.sort((a, b) => {
-      let av = a[key] || "", bv = b[key] || "";
-      if (key === "日付") { av = parseSlashDate(av); bv = parseSlashDate(bv); }
-      else { av = parseFloat(av) || 0; bv = parseFloat(bv) || 0; }
+      let av = a[sortKey] || "", bv = b[sortKey] || "";
+      if (sortKey === "日付") {
+        av = parseSlashDate(av);
+        bv = parseSlashDate(bv);
+      } else {
+        av = parseFloat(av) || 0;
+        bv = parseFloat(bv) || 0;
+      }
       return sortAsc ? av - bv : bv - av;
     });
     render(rows);
@@ -208,28 +171,27 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ソートボタン処理
-  const buttons = document.querySelectorAll("#sortButtons button");
-  buttons.forEach(btn => {
+  // ソートボタン
+  document.querySelectorAll("#sortButtons button[data-key]").forEach(btn => {
     btn.addEventListener("click", () => {
       const key = btn.dataset.key;
-      if (!key) return; // プラスボタンは無視
-
       if (sortKey === key) sortAsc = !sortAsc;
       else sortAsc = false;
       sortKey = key;
-
-      buttons.forEach(b => {
-        const k = b.dataset.key;
-        if (!k) return;
-        b.textContent = k === sortKey ? k + (sortAsc ? " ▲" : " ▼") : k;
+      document.querySelectorAll("#sortButtons button[data-key]").forEach(b => {
+        b.textContent = b.dataset.key + (b.dataset.key === sortKey ? (sortAsc ? " ▲" : " ▼") : "");
       });
-
       sortAndRender();
     });
   });
+
+  // プラスボタン（追加ページへ）
+  document.getElementById("addButton").addEventListener("click", () => {
+    window.location.href = "input.html";
+  });
+
+  loadCsv();
 });
 </script>
-
 </body>
 </html>
