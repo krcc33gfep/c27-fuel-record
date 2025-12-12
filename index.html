@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>燃費チェックビューワー</title>
 
+<!-- フォント -->
 <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
@@ -23,7 +24,7 @@
     padding:10px;
   }
 
-  /* 並び替えボタンエリア */
+  /* 並び替えボタン */
   #sortButtons {
     display:flex;
     justify-content:center;
@@ -52,11 +53,12 @@
     color:#0f0;
   }
 
+  /* コンテンツエリア */
   .container {
     padding:10px;
     box-sizing:border-box;
     width:800px;       /* ← 全体の横幅を固定 */
-    max-width:100%;    /* ← スマホでもはみ出さないよう調整 */
+    max-width:100%;    /* ← スマホでもはみ出さない */
     margin:0 auto;     /* ← 中央寄せ */
   }
 
@@ -69,30 +71,34 @@
   /* 上段（line1） */
   .line1 {
     display: grid;
-    grid-template-columns: repeat(4, auto); /* ← 各列を内容に合わせて自動調整 */
-    justify-content: space-between;         /* ← 行全体を幅いっぱいに広げる */
+    grid-template-columns: repeat(4, auto); /* 内容に合わせて列幅可変 */
+    justify-content: space-between;
     align-items: center;
     font-size:0.95em;
     color:#eee;
   }
+
+  /* デフォルト右揃え */
   .line1 div { text-align: right; }
-  .line1 div:first-child,
-  .line1 div:last-child {
-    color:#aaa;
-  }
+  /* 日付は左揃え */
+  .line1 div:first-child { text-align: left; }
+  /* 経過年月は控えめに */
+  .line1 div:last-child { color:#aaa; }
 
   /* 下段（line2） */
   .line2 {
     display: grid;
-    grid-template-columns: repeat(4, auto); /* ← 同じく自動調整 */
+    grid-template-columns: repeat(4, auto);
     justify-content: space-between;
     align-items: center;
     font-size:1.3em;
     color:#eee;
   }
+
+  /* 下段はすべて右揃え */
   .line2 div { text-align: right; }
 
-  /* 金額（2番目の列）だけ色変更 */
+  /* 金額（2番目）を強調 */
   .line2 div:nth-child(2) {
     color:#FFB000;
   }
