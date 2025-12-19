@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>燃費チェックビューワー</title>
+
+<!-- フォント -->
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+<style>
+  body {
+    background:#000;
+    color:#fff;
+    font-family:"M PLUS Rounded 1c", sans-serif;
+    margin:0;
+    font-size:17px;
+  }
+
+  header {
+    background:#111;
+    border-bottom:1px solid #222;
+    padding:10px;
+  }
+
+  /* 並び替えボタン */
+  #sortButtons {
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:4px;
+    max-width:800px;  /* ← 横幅固定 */
+    margin:0 auto;    /* ← 中央寄せ */
+  }
+
+  #sortButtons button {
+    flex:1;
+    min-width:0; /* ← ボタン数が増えても均等に縮むよう調整 */
+    background:#222;
+    color:#fff;
+    border:1px solid #555;
+    border-radius:6px;
+    padding:3px 8px;
+    font-size:17px;
+    line-height:1;
+    height:32px;
+    box-sizing:border-box;
+    cursor:pointer;
+    transition:border-color 0.2s, color 0.2s;
+  }
+
+  #sortButtons button:hover {
+    border-color:#0f0;
+    color:#0f0;
+  }
+
+  /* コンテンツエリア */
+  .container {
+    padding:10px;
+    box-sizing:border-box;
+    width:800px;
+    max-width:100%;
+    margin:0 auto;
+  }
+
+  .row {
+    border-bottom:1px solid #222;
+    padding:6px 4px;
+    line-height:1.4em;
+  }
+
+  .line1 {
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+    justify-content: space-between;
+    align-items: center;
+    font-size:0.95em;
+    color:#eee;
+  }
+
+  .line1 div { text-align: right; }
+  .line1 div:first-child { text-align: left; }
+  .line1 div:last-child { color:#aaa; }
+
+  .line2 {
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+    justify-content: space-between;
+    align-items: center;
+    font-size:1.3em;
+    color:#eee;
+  }
+
+  .line2 div { text-align: right; }
+
+  .line2 div:nth-child(2) {
+    color:#FFB000;
+  }
+
+  .line2 .highlight {
+    color:#0f0;
+    font-weight:normal;
+    font-size:1em;
+  }
+
+  @media (max-width:600px){
+    body { font-size:15px; }
+    #sortButtons button { font-size:15px; }
+    .line1 { font-size:0.9em; }
+    .line2 { font-size:1.2em; }
+  }
+</style>
+</head>
+
+<body>
+
+<header>
+  <div id="sortButtons">
+    <!-- 🔽 TRIPボタンを追加（6個目） -->
+    <button data-key="日付">日付 ▼</button>
+    <button data-key="数量">数量</button>
+    <button data-key="金額">金額</button>
+    <button data-key="単価">単価</button>
+    <button data-key="燃費">燃費</button>
+    <button data-key="TRIP">TRIP</button> <!-- ← 新規追加 -->
+  </div>
+</header>
+
+<div class="container" id="output">読み込み中...</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  let rows = [];
+  let sortKey = "日付";
+  let sortAsc = false;
+
+  const csvUrl = "https://docs.google.com/spreadsheets/d/1YKMiMq2GpMAR3cqvqeiklqtGuQa8JJx4oO5YnpzxKso/gviz/tq?tqx=out:csv&sheet=燃費";
+
+  function formatDateDisplay(str) {
+    const m = str.match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
+    if (!m) return str;
+    return `${m[1]}年${parseInt(m[2])}月${parseInt(m[3])}日`;
+  }
+
+  function parseSlashDate(str) {
+    const m = str.match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
+    if (!m) return new Date(0);
+    return new Date(+m[1], +m[2]-1, +m[3]);
+  }
+
+  fetch(csvUrl)
+    .then(r => r.text())
+    .then(csvText => {
+      Papa.parse(csvText, {
+        header: true,
+        skipEmptyLines: true,
+        complete: results => {
+          rows = results.data;
+          sortAndRender();
+        }
+      });
+    })
+    .catch(err => {
+      document.getElementById("output").innerHTML = "❌ データの読み込みに失敗しました。";
+      console.error(err);
+    });
+
+  function sortAndRender() {
+    const key = sortKey;
+    rows.sort((a, b) => {
+      let av = a[key] || "", bv = b[key] || "";
+      if (key === "日付") { av = parseSlashDate(av); bv = parseSlashDate(bv); }
+      else { av = parseFloat(av) || 0; bv = parseFloat(bv) || 0; }
+      return sortAsc ? av - bv : bv - av;
+    });
+    render(rows);
+  }
+
+  function render(data) {
+    const out = document.getElementById("output");
+    out.innerHTML = "";
+    data.forEach(r => {
+      const el = document.createElement("div");
+      el.className = "row";
+      el.innerHTML = `
+        <div class="line1">
+          <div>${formatDateDisplay(r["日付"] || "")}</div>
+          <div>${r["ODO"] || ""}km</div>
+          <div>${r["TRIP"] || ""}km</div>
+          <div>${r["経過年月"] || ""}</div>
+        </div>
+        <div class="line2">
+          <div>${r["数量"] || ""}L</div>
+          <div>${r["金額"] || ""}円</div>
+          <div>${r["単価"] || ""}円/L</div>
+          <div class="highlight">${r["燃費"] || ""}km/L</div>
+        </div>
+      `;
+      out.appendChild(el);
+    });
+  }
+
+  // ソートボタン処理
+  const buttons = document.querySelectorAll("#sortButtons button");
+  buttons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const key = btn.dataset.key;
+      if (sortKey === key) sortAsc = !sortAsc;
+      else sortAsc = false;
+      sortKey = key;
+
+      buttons.forEach(b => {
+        if (b.dataset.key === sortKey) {
+          b.textContent = key + (sortAsc ? " ▲" : " ▼");
+        } else {
+          b.textContent = b.dataset.key;
+        }
+      });
+
+      sortAndRender();
+    });
+  });
+});
+</script>
+
+</body>
+</html>
